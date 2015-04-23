@@ -79,10 +79,18 @@
   <properties>
     <sonar.pluginName>PDF Report</sonar.pluginName>
     <sonar.pluginClass>org.sonar.report.pdf.plugin.PDFReportPlugin</sonar.pluginClass>
-    <sonar.version>4.5.1</sonar.version>
+    <sonar.version>5.1</sonar.version>
   </properties>
 
   <dependencies>
+
+	<dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>servlet-api</artifactId>
+		<version>2.5</version>
+		<scope>provided</scope>
+	</dependency>
+  
     <dependency>
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-plugin-api</artifactId>

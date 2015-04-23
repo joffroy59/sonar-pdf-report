@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.sonar.api.config.Settings;
 import org.sonar.api.resources.Project;
 import org.sonar.report.pdf.batch.PDFPostJob;
 import org.testng.annotations.Test;
@@ -33,19 +33,19 @@ public class PDFPostJobTest {
 
     @Test(groups = { "post-job" })
     public void doNotExecuteIfSkipParameter() {
-        PropertiesConfiguration conf = new PropertiesConfiguration();
-        conf.setProperty(PDFPostJob.SKIP_PDF_KEY, Boolean.TRUE);
+        // PropertiesConfiguration conf = new PropertiesConfiguration();
+        // conf.setProperty(PDFPostJob.SKIP_PDF_KEY, Boolean.TRUE);
 
         Project project = mock(Project.class);
-        when(project.getConfiguration()).thenReturn(conf);
-
+        when(project.getSettings()).thenReturn(new Settings().setProperty(PDFPostJob.SKIP_PDF_KEY, Boolean.TRUE));
+        
         assertFalse(new PDFPostJob().shouldExecuteOnProject(project));
     }
 
     @Test(groups = { "post-job" })
     public void shouldExecuteIfNoSkipParameter() {
         Project project = mock(Project.class);
-        when(project.getConfiguration()).thenReturn(new PropertiesConfiguration());
+        when(project.getSettings()).thenReturn(null);
 
         assertTrue(new PDFPostJob().shouldExecuteOnProject(project));
     }

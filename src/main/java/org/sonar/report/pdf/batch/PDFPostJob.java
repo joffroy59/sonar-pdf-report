@@ -54,17 +54,17 @@ public class PDFPostJob implements PostJob, CheckProject {
 
   @Override
   public boolean shouldExecuteOnProject(final Project project) {
-    return !project.getConfiguration().getBoolean(SKIP_PDF_KEY, SKIP_PDF_DEFAULT_VALUE);
+      return !((project.getSettings() == null)?SKIP_PDF_DEFAULT_VALUE:project.getSettings().getBoolean(SKIP_PDF_KEY)); 
   }
 
   @Override
   public void executeOn(final Project project, final SensorContext context) {
     LOG.info("Executing decorator: PDF Report");
-    String sonarHostUrl = project.getConfiguration().getString(SONAR_HOST_URL, SONAR_HOST_URL_DEFAULT_VALUE);
-    String username = project.getConfiguration().getString(USERNAME, USERNAME_DEFAULT_VALUE);
-    String password = project.getConfiguration().getString(PASSWORD, PASSWORD_DEFAULT_VALUE);
-    String branch = project.getConfiguration().getString(SONAR_BRANCH, SONAR_BRANCH_DEFAULT_VALUE);
-    String reportType = project.getConfiguration().getString(REPORT_TYPE, REPORT_TYPE_DEFAULT_VALUE);
+    String sonarHostUrl = project.getSettings().getString(SONAR_HOST_URL);
+    String username = project.getSettings().getString(USERNAME);
+    String password = project.getSettings().getString(PASSWORD);
+    String branch = project.getSettings().getString(SONAR_BRANCH);
+    String reportType = project.getSettings().getString(REPORT_TYPE);
     PDFGenerator generator = new PDFGenerator(project, sonarHostUrl, username, password, branch, reportType);
 
     generator.execute();

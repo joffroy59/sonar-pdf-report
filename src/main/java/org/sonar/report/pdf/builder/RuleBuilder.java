@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.utils.HttpDownloader.HttpException;
@@ -80,7 +79,6 @@ public class RuleBuilder {
    * 
    * @return
    * @throws UnsupportedEncodingException
-   * @throws DocumentException
    * @throws IOException
    * @throws HttpException
    */
@@ -97,7 +95,7 @@ public class RuleBuilder {
       IssueClient issueClient = client.issueClient();
 
       IssueQuery issueQuery = IssueQuery.create();
-      issueQuery.componentRoots(projectKey);
+      issueQuery.components(projectKey);  
       issueQuery.pageSize(20);
       issueQuery.rules(ruleKey);
       // "&scopes=FIL&depth=-1&limit=20
