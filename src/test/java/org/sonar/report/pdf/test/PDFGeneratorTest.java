@@ -36,7 +36,7 @@ import com.lowagie.text.DocumentException;
 
 public class PDFGeneratorTest {
 
-  /**
+/**
    * Build a PDF report for the Sonar project on "sonar.base.url" instance of
    * Sonar. The property "sonar.base.url" is set in report.properties, this file
    * will be provided by the artifact consumer.
@@ -50,7 +50,7 @@ public class PDFGeneratorTest {
   public void getReportTest() throws DocumentException, IOException, ReportException {
     Properties config = new Properties();
     config.setProperty("front.page.logo", "sonar.png");
-    String sonarUrl = "http://nemo.sonarsource.org";
+    String sonarUrl = IConstants.SONAR_URL;
     config.setProperty("sonar.base.url", sonarUrl);
 
     URL resourceText = this.getClass().getClassLoader().getResource("report-texts-en.properties");

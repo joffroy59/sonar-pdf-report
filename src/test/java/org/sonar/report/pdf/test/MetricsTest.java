@@ -40,7 +40,7 @@ public class MetricsTest {
       ReportException {
     Properties config = new Properties();
     config.setProperty("front.page.logo", "sonar.png");
-    String sonarUrl = "http://nemo.sonarsource.org";
+    String sonarUrl = IConstants.SONAR_URL;
     config.setProperty("sonar.base.url", sonarUrl);
 
     URL resourceText = this.getClass().getClassLoader().getResource("report-texts-en.properties");
