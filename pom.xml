@@ -80,6 +80,7 @@
     <sonar.pluginName>PDF Report</sonar.pluginName>
     <sonar.pluginClass>org.sonar.report.pdf.plugin.PDFReportPlugin</sonar.pluginClass>
     <sonar.version>5.1</sonar.version>
+    <license.failIfMissing>false</license.failIfMissing>
   </properties>
 
   <dependencies>
