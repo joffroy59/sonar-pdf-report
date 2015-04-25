@@ -326,7 +326,7 @@ public class ExecutivePDFReporter extends PDFReporter {
     PdfPTable technicalDebt = new PdfPTable(1);
     Style.noBorderTable(technicalDebt);
     technicalDebt
-        .addCell(new Phrase(getTextProperty("general.technical_debt")+"TEST",
+        .addCell(new Phrase(getTextProperty("general.technical_debt"),
             Style.DASHBOARD_TITLE_FONT));
     PdfPTable technicalDebtTendency = new PdfPTable(2);
     Style.noBorderTable(technicalDebtTendency);
