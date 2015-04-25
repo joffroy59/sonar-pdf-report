@@ -21,8 +21,13 @@ package org.sonar.report.pdf.entity.exception;
 
 public class ReportException extends Exception {
 
-  public ReportException(final String msg) {
-    super(msg);
-  }
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5273437802346910542L;
+
+    public ReportException(final String msg) {
+        super(msg);
+    }
 
 }
