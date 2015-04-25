@@ -24,29 +24,40 @@ import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertFalse;
 import static org.testng.AssertJUnit.assertTrue;
 
+import org.sonar.api.batch.fs.internal.DefaultFileSystem;
 import org.sonar.api.config.Settings;
 import org.sonar.api.resources.Project;
 import org.sonar.report.pdf.batch.PDFPostJob;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 public class PDFPostJobTest {
 
+    private Project project;
+    private Settings settings;
+    private DefaultFileSystem fs;
+    private PDFPostJob pdfPostJob;
+
+    @BeforeGroups(groups = { "post-job" })
+    public void before() {
+      project = mock(Project.class);
+      settings = mock(Settings.class);
+      fs = mock(DefaultFileSystem.class);
+      pdfPostJob = new PDFPostJob(settings, fs);
+    }
+
     @Test(groups = { "post-job" })
     public void doNotExecuteIfSkipParameter() {
-        // PropertiesConfiguration conf = new PropertiesConfiguration();
-        // conf.setProperty(PDFPostJob.SKIP_PDF_KEY, Boolean.TRUE);
+        when(settings.hasKey(PDFPostJob.SKIP_PDF_KEY)).thenReturn(Boolean.TRUE);
+        when(settings.getBoolean(PDFPostJob.SKIP_PDF_KEY)).thenReturn(Boolean.TRUE);
 
-        Project project = mock(Project.class);
-        when(project.getSettings()).thenReturn(new Settings().setProperty(PDFPostJob.SKIP_PDF_KEY, Boolean.TRUE));
-        
-        assertFalse(new PDFPostJob().shouldExecuteOnProject(project));
+        assertFalse(pdfPostJob.shouldExecuteOnProject(project));
     }
 
     @Test(groups = { "post-job" })
     public void shouldExecuteIfNoSkipParameter() {
-        Project project = mock(Project.class);
-        when(project.getSettings()).thenReturn(null);
+        when(settings.hasKey(PDFPostJob.SKIP_PDF_KEY)).thenReturn(Boolean.FALSE);
 
-        assertTrue(new PDFPostJob().shouldExecuteOnProject(project));
+        assertTrue(pdfPostJob.shouldExecuteOnProject(project));
     }
 }
