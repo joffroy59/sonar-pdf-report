@@ -332,11 +332,7 @@ private static final String NONE_FORMAT = "";
 
     
     PdfPTable technicalDebt = getIssueDetail(project, "general.technical_debt", MetricKeys.TECHNICAL_DEBT, -200, DAY_FORMAT);
-    
-    //START ISSUES
-    PdfPTable violations = getIssueDetail(project, "general.violations", MetricKeys.VIOLATIONS, -1345, NONE_FORMAT);
-    
-    //END ISSUES
+    PdfPTable violations    = getIssueDetail(project, "general.violations", MetricKeys.VIOLATIONS, -1345, NONE_FORMAT);
     
     codingRulesViolationsTable.setSpacingBefore(10);
     codingRulesViolationsTable.addCell(technicalDebt);
