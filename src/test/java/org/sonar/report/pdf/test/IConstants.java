@@ -22,6 +22,6 @@ package org.sonar.report.pdf.test;
 
 public interface IConstants {
 
-    static final String SONAR_URL = IConstants.SONAR_URL;
+    static final String SONAR_URL = "http://nemo.sonarsource.org";
 
 }
