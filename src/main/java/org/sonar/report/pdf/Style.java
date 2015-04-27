@@ -122,6 +122,12 @@ public class Style {
 
   public static final float FRONTPAGE_LOGO_POSITION_Y = 542;
 
+  /**
+   * Tendency details font
+   */
+  public static final Font DASHBOARD_DATA_FONT_3 = new Font(Font.TIMES_ROMAN,
+      14, Font.BOLD, new Color(225, 80, 80));
+
   public static void noBorderTable(final PdfPTable table) {
     table.getDefaultCell().setBorderColor(Color.WHITE);
   }

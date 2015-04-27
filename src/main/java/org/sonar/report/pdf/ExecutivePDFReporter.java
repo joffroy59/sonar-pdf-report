@@ -38,16 +38,20 @@ import org.sonar.report.pdf.util.Credentials;
 import org.sonar.report.pdf.util.MetricKeys;
 
 import com.lowagie.text.BadElementException;
+import com.lowagie.text.Cell;
 import com.lowagie.text.ChapterAutoNumber;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.Section;
+import com.lowagie.text.pdf.PdfCell;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -323,18 +327,27 @@ public class ExecutivePDFReporter extends PDFReporter {
     PdfPTable codingRulesViolationsTable = new PdfPTable(3);
     Style.noBorderTable(codingRulesViolationsTable);
 
+    
+    //START SQALE_INDEX
     PdfPTable technicalDebt = new PdfPTable(1);
     Style.noBorderTable(technicalDebt);
     technicalDebt
         .addCell(new Phrase(getTextProperty("general.technical_debt"),
             Style.DASHBOARD_TITLE_FONT));
-    PdfPTable technicalDebtTendency = new PdfPTable(2);
+    PdfPTable technicalDebtTendency = new PdfPTable(3);
+    technicalDebtTendency.setWidths(new float[] {50f, 10f, 40f});
     Style.noBorderTable(technicalDebtTendency);
     technicalDebtTendency.getDefaultCell().setFixedHeight(
         Style.TENDENCY_ICONS_HEIGHT);
-    technicalDebtTendency.addCell(new Phrase(project.getMeasure(
+    Phrase techDebtFormatValue = new Phrase(project.getMeasure(
         MetricKeys.TECHNICAL_DEBT).getFormatValue(),
-        Style.DASHBOARD_DATA_FONT));
+        Style.DASHBOARD_DATA_FONT);
+    
+    PdfPCell technicalDebtTendencyCell = new PdfPCell(techDebtFormatValue);
+    technicalDebtTendencyCell.setBorder(Rectangle.NO_BORDER);
+    technicalDebtTendencyCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+    
+    technicalDebtTendency.addCell(technicalDebtTendencyCell);
 
     // Workarround for avoid resizing
     Image tendencyTechnicalDebtResize = getTendencyImage(
@@ -344,11 +357,22 @@ public class ExecutivePDFReporter extends PDFReporter {
             .getQuantitativeTendency());
     tendencyTechnicalDebtResize.scaleAbsolute(Style.TENDENCY_ICONS_HEIGHT,
         Style.TENDENCY_ICONS_HEIGHT);
-    PdfPCell tendencyRulesCell = new PdfPCell(tendencyTechnicalDebtResize);
-    tendencyRulesCell.setBorder(0);
-    technicalDebtTendency.addCell(tendencyRulesCell);
-    technicalDebt.addCell(technicalDebtTendency);
 
+    PdfPCell tendencyRulesCell = new PdfPCell(tendencyTechnicalDebtResize);
+    tendencyRulesCell.setBorder(Rectangle.NO_BORDER);
+    tendencyRulesCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+    technicalDebtTendency.addCell(tendencyRulesCell);
+
+    //Phrase phrase = new Phrase("+ 2d",colorRed);
+    Phrase phrase = new Phrase("+ 200d",Style.DASHBOARD_DATA_FONT_3);
+
+    technicalDebtTendency.addCell(phrase);
+    
+    //END SQALE_INDEX
+
+    technicalDebt.addCell(technicalDebtTendency);
+    
+    //START ISSUES
     PdfPTable violations = new PdfPTable(1);
     Style.noBorderTable(violations);
     violations.addCell(new Phrase(getTextProperty("general.violations"),
@@ -371,12 +395,15 @@ public class ExecutivePDFReporter extends PDFReporter {
     violationsTendency.addCell(tendencyCell);
 
     violations.addCell(violationsTendency);
+    
+    //END ISSUES
 
     codingRulesViolationsTable.setSpacingBefore(10);
     codingRulesViolationsTable.addCell(technicalDebt);
-    codingRulesViolationsTable.addCell(violations);
     codingRulesViolationsTable.addCell("");
+    codingRulesViolationsTable.addCell(violations);
     codingRulesViolationsTable.setSpacingAfter(20);
+    codingRulesViolationsTable.setWidths(new float[] {48f, 4f, 48f});
 
     section.add(Chunk.NEWLINE);
     section.add(staticAnalysis);
