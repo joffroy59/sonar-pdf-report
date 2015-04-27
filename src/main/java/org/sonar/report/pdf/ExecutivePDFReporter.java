@@ -62,6 +62,9 @@ public class ExecutivePDFReporter extends PDFReporter {
 
   private static final String REPORT_TYPE_EXECUTIVE = "executive";
 
+private static final String DAY_FORMAT = " d";
+private static final String NONE_FORMAT = "";
+
   private URL logo;
   private String projectKey;
   private Properties configProperties;
@@ -328,76 +331,13 @@ public class ExecutivePDFReporter extends PDFReporter {
     Style.noBorderTable(codingRulesViolationsTable);
 
     
-    //START SQALE_INDEX
-    PdfPTable technicalDebt = new PdfPTable(1);
-    Style.noBorderTable(technicalDebt);
-    technicalDebt
-        .addCell(new Phrase(getTextProperty("general.technical_debt"),
-            Style.DASHBOARD_TITLE_FONT));
-    PdfPTable technicalDebtTendency = new PdfPTable(3);
-    technicalDebtTendency.setWidths(new float[] {50f, 10f, 40f});
-    Style.noBorderTable(technicalDebtTendency);
-    technicalDebtTendency.getDefaultCell().setFixedHeight(
-        Style.TENDENCY_ICONS_HEIGHT);
-    Phrase techDebtFormatValue = new Phrase(project.getMeasure(
-        MetricKeys.TECHNICAL_DEBT).getFormatValue(),
-        Style.DASHBOARD_DATA_FONT);
-    
-    PdfPCell technicalDebtTendencyCell = new PdfPCell(techDebtFormatValue);
-    technicalDebtTendencyCell.setBorder(Rectangle.NO_BORDER);
-    technicalDebtTendencyCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-    
-    technicalDebtTendency.addCell(technicalDebtTendencyCell);
-
-    // Workarround for avoid resizing
-    Image tendencyTechnicalDebtResize = getTendencyImage(
-        project.getMeasure(MetricKeys.TECHNICAL_DEBT)
-            .getQualitativeTendency(),
-        project.getMeasure(MetricKeys.TECHNICAL_DEBT)
-            .getQuantitativeTendency());
-    tendencyTechnicalDebtResize.scaleAbsolute(Style.TENDENCY_ICONS_HEIGHT,
-        Style.TENDENCY_ICONS_HEIGHT);
-
-    PdfPCell tendencyRulesCell = new PdfPCell(tendencyTechnicalDebtResize);
-    tendencyRulesCell.setBorder(Rectangle.NO_BORDER);
-    tendencyRulesCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-    technicalDebtTendency.addCell(tendencyRulesCell);
-
-    //Phrase phrase = new Phrase("+ 2d",colorRed);
-    Phrase phrase = new Phrase("+ 200d",Style.DASHBOARD_DATA_FONT_3);
-
-    technicalDebtTendency.addCell(phrase);
-    
-    //END SQALE_INDEX
-
-    technicalDebt.addCell(technicalDebtTendency);
+    PdfPTable technicalDebt = getIssueDetail(project, "general.technical_debt", MetricKeys.TECHNICAL_DEBT, -200, DAY_FORMAT);
     
     //START ISSUES
-    PdfPTable violations = new PdfPTable(1);
-    Style.noBorderTable(violations);
-    violations.addCell(new Phrase(getTextProperty("general.violations"),
-        Style.DASHBOARD_TITLE_FONT));
-    PdfPTable violationsTendency = new PdfPTable(2);
-    Style.noBorderTable(violationsTendency);
-    violationsTendency.getDefaultCell().setFixedHeight(
-        Style.TENDENCY_ICONS_HEIGHT);
-    violationsTendency.addCell(new Phrase(project.getMeasure(
-        MetricKeys.VIOLATIONS).getFormatValue(), Style.DASHBOARD_DATA_FONT));
-
-    // Workarround for avoid resizing
-    Image tendencyResize = getTendencyImage(
-        project.getMeasure(MetricKeys.VIOLATIONS).getQualitativeTendency(),
-        project.getMeasure(MetricKeys.VIOLATIONS).getQuantitativeTendency());
-    tendencyResize.scaleAbsolute(Style.TENDENCY_ICONS_HEIGHT,
-        Style.TENDENCY_ICONS_HEIGHT);
-    PdfPCell tendencyCell = new PdfPCell(tendencyResize);
-    tendencyCell.setBorder(0);
-    violationsTendency.addCell(tendencyCell);
-
-    violations.addCell(violationsTendency);
+    PdfPTable violations = getIssueDetail(project, "general.violations", MetricKeys.VIOLATIONS, -1345, NONE_FORMAT);
     
     //END ISSUES
-
+    
     codingRulesViolationsTable.setSpacingBefore(10);
     codingRulesViolationsTable.addCell(technicalDebt);
     codingRulesViolationsTable.addCell("");
@@ -414,7 +354,54 @@ public class ExecutivePDFReporter extends PDFReporter {
     section.add(codingRulesViolationsTable);
   }
 
-  protected void printMostDuplicatedFiles(final Project project, final Section section) {
+private PdfPTable getIssueDetail(final Project project, String headerTextProperty, String metricKeys, int metricDelta2, String format) throws DocumentException {
+    PdfPTable issueDetail = new PdfPTable(1);
+    Style.noBorderTable(issueDetail);
+    issueDetail
+        .addCell(new Phrase(getTextProperty(headerTextProperty),
+            Style.DASHBOARD_TITLE_FONT));
+    PdfPTable issueDetailTendency = new PdfPTable(3);
+    issueDetailTendency.setWidths(new float[] {50f, 15f, 35f});
+    Style.noBorderTable(issueDetailTendency);
+    issueDetailTendency.getDefaultCell().setFixedHeight(
+        Style.TENDENCY_ICONS_HEIGHT);
+    Phrase metricFormatValue = new Phrase(project.getMeasure(
+        metricKeys).getFormatValue(),
+        Style.DASHBOARD_DATA_FONT);
+    
+    PdfPCell issueTendencyCell = new PdfPCell(metricFormatValue);
+    issueTendencyCell.setBorder(Rectangle.NO_BORDER);
+    issueTendencyCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+    
+    issueDetailTendency.addCell(issueTendencyCell);
+
+    // Workarround for avoid resizing
+    Image tendencyIssueResize = getTendencyImage(
+        project.getMeasure(metricKeys)
+            .getQualitativeTendency(),
+        project.getMeasure(metricKeys)
+            .getQuantitativeTendency());
+    tendencyIssueResize.scaleAbsolute(Style.TENDENCY_ICONS_HEIGHT,
+        Style.TENDENCY_ICONS_HEIGHT);
+
+    PdfPCell tendencyRulesCell = new PdfPCell(tendencyIssueResize);
+    tendencyRulesCell.setBorder(Rectangle.NO_BORDER);
+    tendencyRulesCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+    issueDetailTendency.addCell(tendencyRulesCell);
+
+    Phrase phrase = new Phrase(formatValue(metricDelta2,format),Style.DASHBOARD_DATA_FONT_3);
+
+    issueDetailTendency.addCell(phrase);
+    
+    issueDetail.addCell(issueDetailTendency);
+    return issueDetail;
+}
+
+  private String formatValue(int metricDelta2, String format) {
+    return (metricDelta2>0?"+":"") +metricDelta2 + format;
+}
+
+protected void printMostDuplicatedFiles(final Project project, final Section section) {
     List<FileInfo> files = project.getMostDuplicatedFiles();
     Iterator<FileInfo> it = files.iterator();
     List<String> left = new LinkedList<String>();
